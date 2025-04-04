@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Тема парсер</title>
+    <title>Парсинг списка тем</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -21,6 +21,9 @@
             cursor: pointer;
             margin-top: 10px;
         }
+        .topic {
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
@@ -29,46 +32,7 @@
     <button onclick="parseText()">Парсить</button>
     <div id="output"></div>
 
-    <script>
-        function parseText() {
-            const inputText = document.getElementById('inputText').value;
-
-            // Регулярные выражения для поиска
-            const regex = /Рассмотрено\s([A-Za-zА-Яа-я]+)\s\|?\s(\d{2}\.\d{2}\.\d{4})\s(?:\d{2}:\d{2})?\s\|?\s(.+?)\s(?:Изменить|Выделить для модерации)/g;
-
-            let match;
-            let output = "<h2>Найденные темы:</h2>";
-
-            // Массив для замены "ESB" на "Ballas"
-            const organizationMapping = {
-                "esb": "Ballas"
-            };
-
-            // Прокачаем все найденные темы
-            while ((match = regex.exec(inputText)) !== null) {
-                let org = match[1];
-                let date = match[2];
-                let title = match[3];
-
-                // Заменяем ESB на Ballas
-                if (organizationMapping[org.toLowerCase()]) {
-                    org = organizationMapping[org.toLowerCase()];
-                }
-
-                // Формируем нужный вывод
-                output += `
-                    <p>+1 балл лидеру **${org}** | <@id> | ${date} | Организация мероприятия "${title}" | Баллы: **X**</p>
-                `;
-            }
-
-            // Если темы не найдены
-            if (!output.includes('Найденные темы:')) {
-                output = "<p>Нет подходящих данных.</p>";
-            }
-
-            // Выводим на страницу
-            document.getElementById('output').innerHTML = output;
-        }
-    </script>
+    <!-- Подключаем внешний JavaScript файл -->
+    <script src="script.js"></script>
 </body>
 </html>
