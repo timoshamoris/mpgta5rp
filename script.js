@@ -1,41 +1,55 @@
 document.getElementById("processButton").addEventListener("click", function() {
-    const scoreInput = document.getElementById("inputScores").value;
-    const textInput = document.getElementById("inputText").value;
-    const output = document.getElementById("output");
+    let inputText = document.getElementById("inputText").value;
+    let themesList = document.getElementById("themesList");
+    let resultsDiv = document.getElementById("results");
+    
+    themesList.innerHTML = "";  
+    resultsDiv.style.display = "none";  
 
-    if (!scoreInput.trim() || !textInput.trim()) {
-        alert("Введите баллы и список тем!");
+    let regex = /Рассмотрено (\w+) \| ([\d.]+) [^|]+\| "(.+?)"/g;
+    let matches = [...inputText.matchAll(regex)];
+
+    if (matches.length === 0) {
+        alert("Не найдено ни одной темы!");
         return;
     }
 
-    console.log("Полученные баллы:", scoreInput);
-    console.log("Полученный текст:", textInput);
+    let foundThemes = [];
 
-    // Разбираем баллы
-    let scores = {};
-    scoreInput.split(",").forEach(pair => {
-        let [org, points] = pair.trim().split("-");
-        if (org && points) scores[org.trim()] = parseInt(points.trim());
+    matches.forEach(match => {
+        let [_, faction, date, title] = match;
+        if (faction === "ESB") faction = "Ballas";
+        foundThemes.push({ faction, date, title });
+        
+        let li = document.createElement("li");
+        li.textContent = `${faction} | ${date} | ${title}`;
+        themesList.appendChild(li);
     });
 
-    console.log("Обработанные баллы:", scores);
+    resultsDiv.style.display = "block";
 
-    // Обрабатываем текст
-    let result = "";
-    const regex = /Рассмотрено (\w+) \| ([\d.]+)[^|]*\| ["“](.*?)["”]/g;
-    let match;
+    document.getElementById("calculateButton").addEventListener("click", function() {
+        let scoresInput = document.getElementById("scoresInput").value;
+        let scores = {};
+        
+        scoresInput.split(",").forEach(entry => {
+            let parts = entry.trim().split(" - ");
+            if (parts.length === 2) scores[parts[0]] = parseInt(parts[1]);
+        });
 
-    while ((match = regex.exec(textInput)) !== null) {
-        let [_, org, date, eventName] = match;
-        if (org === "ESB") org = "Ballas"; // Заменяем ESB на Ballas
-        if (!scores[org] || scores[org] >= 70) continue; // Пропускаем, если баллы >= 70
+        let outputDiv = document.getElementById("output");
+        outputDiv.innerHTML = "<h2>Результаты:</h2>";
 
-        console.log("Найдено:", { org, date, eventName });
+        foundThemes.forEach(theme => {
+            if (!scores.hasOwnProperty(theme.faction) || scores[theme.faction] >= 70) return;
 
-        scores[org] += 1;
-        result += `+**1** балл лидеру **${org}** | <@id> | ${date} | Организация мероприятия "${eventName}" | Баллы: **${scores[org]}**\n\n`;
-    }
+            scores[theme.faction] += 1;
 
-    console.log("Результат:", result);
-    output.textContent = result || "Нет подходящих данных.";
+            let result = `+**1** балл лидеру **${theme.faction}** | | ${theme.date} | Организация мероприятия "${theme.title}" | Баллы: **${scores[theme.faction]}**`;
+            
+            let p = document.createElement("p");
+            p.innerHTML = result;
+            outputDiv.appendChild(p);
+        });
+    });
 });
