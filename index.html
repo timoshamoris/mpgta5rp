@@ -36,8 +36,8 @@
         function parseText() {
             const inputText = document.getElementById('inputText').value;
 
-            // Регулярное выражение для поиска темы и ее данных (фракция, дата, название темы)
-            const regex = /Рассмотрено\s([A-Za-zА-Яа-я]+)\s\|\s(\d{1,2}\.\d{1,2}\.\d{4})\s?(\d{2}:\d{2})?\s?\|\s"([^"]+)"/g;
+            // Регулярное выражение для поиска всех тем
+            const regex = /Рассмотрено\s([A-Za-zА-Яа-я]+)\s\|\s(\d{1,2}\.\d{1,2}\.\d{4})\s?\d{0,2}:\d{0,2}\s?\|\s([^\|"]+)/g;
 
             let match;
             let output = "<h2>Найденные темы:</h2>";
@@ -52,7 +52,7 @@
             while ((match = regex.exec(inputText)) !== null) {
                 let org = match[1]; // Организация
                 let date = match[2]; // Дата
-                let title = match[4]; // Название темы
+                let title = match[3]; // Название темы
 
                 // Заменяем ESB на Ballas
                 if (organizationMapping[org.toLowerCase()]) {
