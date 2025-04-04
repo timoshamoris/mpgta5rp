@@ -3,18 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Система баллов</title>
+    <title>Обработка тем</title>
 </head>
 <body>
-    <h1>Введите текущие баллы для каждой организации</h1>
-    <textarea id="inputScores" placeholder="Пример: YAK - 60, MM - 91"></textarea>
-    <br><br>
-    <textarea id="inputText" placeholder="Вставьте список тем здесь"></textarea>
-    <br><br>
-    <button id="processButton">Обработать</button>
-    <h2>Результат:</h2>
-    <pre id="output"></pre>
+    <h2>Введите список тем:</h2>
+    <textarea id="inputText" rows="10" cols="50"></textarea>
+    <button id="processButton">Найти темы</button>
 
-    <script src="script.js"></script> 
+    <div id="results" style="display:none;">
+        <h2>Найденные темы:</h2>
+        <ul id="themesList"></ul>
+        <h2>Введите текущие баллы (пример: YAK - 60, AM - 34):</h2>
+        <textarea id="scoresInput" rows="5" cols="50"></textarea>
+        <button id="calculateButton">Рассчитать баллы</button>
+    </div>
+
+    <div id="output"></div>
+
+    <script src="script.js"></script>
 </body>
 </html>
