@@ -3,23 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Обработка тем</title>
+    <title>Обработчик Тем</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        textarea { width: 100%; height: 150px; margin-bottom: 10px; }
+        button { padding: 10px; cursor: pointer; margin-top: 10px; }
+        #themesList, #output { margin-top: 20px; }
+    </style>
 </head>
 <body>
-    <h2>Введите список тем:</h2>
-    <textarea id="inputText" rows="10" cols="50"></textarea>
-    <button id="processButton">Найти темы</button>
 
-    <div id="results" style="display:none;">
+    <h2>Введите список тем:</h2>
+    <textarea id="inputText" placeholder="Вставьте текст..."></textarea>
+    <button id="findThemes">Найти темы</button>
+
+    <div id="themesList" style="display: none;">
         <h2>Найденные темы:</h2>
-        <ul id="themesList"></ul>
-        <h2>Введите текущие баллы (пример: YAK - 60, AM - 34):</h2>
-        <textarea id="scoresInput" rows="5" cols="50"></textarea>
-        <button id="calculateButton">Рассчитать баллы</button>
+        <ul id="themeItems"></ul>
+        <h3>Введите текущие баллы (например: YAK - 60, AM - 34):</h3>
+        <input type="text" id="scoresInput" placeholder="Введите баллы...">
+        <button id="calculateScores">Рассчитать</button>
     </div>
 
     <div id="output"></div>
 
     <script src="script.js"></script>
+
 </body>
 </html>
