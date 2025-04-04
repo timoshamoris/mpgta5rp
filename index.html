@@ -3,31 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Обработчик Тем</title>
+    <title>Тема парсер</title>
     <style>
-        body { font-family: Arial, sans-serif; padding: 20px; }
-        textarea { width: 100%; height: 150px; margin-bottom: 10px; }
-        button { padding: 10px; cursor: pointer; margin-top: 10px; }
-        #themesList, #output { margin-top: 20px; }
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        #output {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+        }
+        button {
+            padding: 10px 15px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
-
-    <h2>Введите список тем:</h2>
-    <textarea id="inputText" placeholder="Вставьте текст..."></textarea>
-    <button id="findThemes">Найти темы</button>
-
-    <div id="themesList" style="display: none;">
-        <h2>Найденные темы:</h2>
-        <ul id="themeItems"></ul>
-        <h3>Введите текущие баллы (например: YAK - 60, AM - 34):</h3>
-        <input type="text" id="scoresInput" placeholder="Введите баллы...">
-        <button id="calculateScores">Рассчитать</button>
-    </div>
-
+    <h1>Парсинг списка тем</h1>
+    <textarea id="inputText" rows="10" cols="50" placeholder="Вставьте текст здесь"></textarea><br><br>
+    <button onclick="parseText()">Парсить</button>
     <div id="output"></div>
 
-    <script src="script.js"></script>
+    <script>
+        function parseText() {
+            const inputText = document.getElementById('inputText').value;
 
+            // Регулярные выражения для поиска
+            const regex = /Рассмотрено\s([A-Za-zА-Яа-я]+)\s\|?\s(\d{2}\.\d{2}\.\d{4})\s(?:\d{2}:\d{2})?\s\|?\s(.+?)\s(?:Изменить|Выделить для модерации)/g;
+
+            let match;
+            let output = "<h2>Найденные темы:</h2>";
+
+            // Массив для замены "ESB" на "Ballas"
+            const organizationMapping = {
+                "esb": "Ballas"
+            };
+
+            // Прокачаем все найденные темы
+            while ((match = regex.exec(inputText)) !== null) {
+                let org = match[1];
+                let date = match[2];
+                let title = match[3];
+
+                // Заменяем ESB на Ballas
+                if (organizationMapping[org.toLowerCase()]) {
+                    org = organizationMapping[org.toLowerCase()];
+                }
+
+                // Формируем нужный вывод
+                output += `
+                    <p>+1 балл лидеру **${org}** | <@id> | ${date} | Организация мероприятия "${title}" | Баллы: **X**</p>
+                `;
+            }
+
+            // Если темы не найдены
+            if (!output.includes('Найденные темы:')) {
+                output = "<p>Нет подходящих данных.</p>";
+            }
+
+            // Выводим на страницу
+            document.getElementById('output').innerHTML = output;
+        }
+    </script>
 </body>
 </html>
