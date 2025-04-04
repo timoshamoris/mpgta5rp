@@ -2,11 +2,12 @@ document.getElementById("processButton").addEventListener("click", function() {
     let inputText = document.getElementById("inputText").value;
     let themesList = document.getElementById("themesList");
     let resultsDiv = document.getElementById("results");
-    
+
     themesList.innerHTML = "";  
     resultsDiv.style.display = "none";  
 
-    let regex = /Рассмотрено\s+(\w+)\s*\|\s*([\d.]+)[^|]*\|\s*["«](.+?)["»]/gi;
+    // Регулярное выражение для извлечения фракции, даты и названия
+    let regex = /Рассмотрено\s+([A-ZА-ЯЁ]+)\s*\|\s*([\d.]+)[^|]*\|\s*["«](.+?)["»]/gi;
     let matches = [...inputText.matchAll(regex)];
 
     if (matches.length === 0) {
@@ -18,9 +19,11 @@ document.getElementById("processButton").addEventListener("click", function() {
 
     matches.forEach(match => {
         let [_, faction, date, title] = match;
-        if (faction.toUpperCase() === "ESB") faction = "Ballas";
-        foundThemes.push({ faction, date, title });
+        faction = faction.toUpperCase();
+        if (faction === "ESB") faction = "Ballas";
         
+        foundThemes.push({ faction, date, title });
+
         let li = document.createElement("li");
         li.textContent = `${faction} | ${date} | ${title}`;
         themesList.appendChild(li);
@@ -34,7 +37,7 @@ document.getElementById("processButton").addEventListener("click", function() {
         
         scoresInput.split(",").forEach(entry => {
             let parts = entry.trim().split(" - ");
-            if (parts.length === 2) scores[parts[0]] = parseInt(parts[1]);
+            if (parts.length === 2) scores[parts[0].toUpperCase()] = parseInt(parts[1]);
         });
 
         let outputDiv = document.getElementById("output");
@@ -46,7 +49,7 @@ document.getElementById("processButton").addEventListener("click", function() {
             scores[theme.faction] += 1;
 
             let result = `+**1** балл лидеру **${theme.faction}** | | ${theme.date} | Организация мероприятия "${theme.title}" | Баллы: **${scores[theme.faction]}**`;
-            
+
             let p = document.createElement("p");
             p.innerHTML = result;
             outputDiv.appendChild(p);
