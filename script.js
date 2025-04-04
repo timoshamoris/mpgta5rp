@@ -1,59 +1,73 @@
-document.getElementById("findThemes").addEventListener("click", function() {
-    let inputText = document.getElementById("inputText").value;
-    let themesListDiv = document.getElementById("themesList");
-    let themeItems = document.getElementById("themeItems");
-    let outputDiv = document.getElementById("output");
+function parseText() {
+    const inputText = document.getElementById('inputText').value;
 
-    themeItems.innerHTML = "";
-    outputDiv.innerHTML = "";
-    themesListDiv.style.display = "none";
+    // Регулярные выражения для поиска
+    const regex = /Рассмотрено\s([A-Za-zА-Яа-я]+)\s\|?\s(\d{1,2}\.\d{1,2}\.\d{4})\s(?:\d{2}:\d{2})?\s\|?\s(.+?)\s(?:Изменить|Выделить для модерации)/g;
 
-    // Улучшенное регулярное выражение
-    let regex = /Рассмотрено\s+([A-ZА-ЯЁ]+)\s*\|\s*([\d]{1,2}[.\d]{1,2}[.\d]{2,4})[^|]*\|\s*["«](.+?)["»]/gi;
-    let matches = [...inputText.matchAll(regex)];
+    let match;
+    let output = "<h2>Найденные темы:</h2>";
+    const topics = [];
 
-    if (matches.length === 0) {
-        alert("Не найдено ни одной темы!");
+    // Массив для замены "ESB" на "Ballas"
+    const organizationMapping = {
+        "esb": "Ballas"
+    };
+
+    // Прокачаем все найденные темы
+    while ((match = regex.exec(inputText)) !== null) {
+        let org = match[1];
+        let date = match[2];
+        let title = match[3];
+
+        // Заменяем ESB на Ballas
+        if (organizationMapping[org.toLowerCase()]) {
+            org = organizationMapping[org.toLowerCase()];
+        }
+
+        // Добавляем тему в список
+        topics.push({ org, date, title });
+    }
+
+    // Если нет найденных тем
+    if (topics.length === 0) {
+        output = "<p>Нет подходящих данных.</p>";
+        document.getElementById('output').innerHTML = output;
         return;
     }
 
-    let foundThemes = [];
-    
-    matches.forEach(match => {
-        let [_, faction, date, title] = match;
-        faction = faction.toUpperCase();
-        if (faction === "ESB") faction = "Ballas"; // Заменяем ESB на Ballas
-
-        foundThemes.push({ faction, date, title });
-
-        let li = document.createElement("li");
-        li.textContent = `${faction} | ${date} | ${title}`;
-        themeItems.appendChild(li);
+    // Выводим найденные темы
+    topics.forEach((topic, index) => {
+        output += `
+            <div class="topic">
+                <p>Тема ${index + 1}: <strong>${topic.title}</strong></p>
+                <p>Организация: <strong>${topic.org}</strong></p>
+                <p>Дата: <strong>${topic.date}</strong></p>
+                <label for="points${index}">Введите баллы для этой темы:</label>
+                <input type="number" id="points${index}" min="0" value="0"><br><br>
+            </div>
+        `;
     });
 
-    themesListDiv.style.display = "block";
+    output += `<button onclick="calculatePoints()">Подсчитать баллы</button>`;
 
-    document.getElementById("calculateScores").addEventListener("click", function() {
-        let scoresInput = document.getElementById("scoresInput").value;
-        let scores = {};
-        
-        scoresInput.split(",").forEach(entry => {
-            let parts = entry.trim().split(" - ");
-            if (parts.length === 2) scores[parts[0].toUpperCase()] = parseInt(parts[1]);
-        });
+    // Выводим на страницу
+    document.getElementById('output').innerHTML = output;
+}
 
-        outputDiv.innerHTML = "<h2>Результаты:</h2>";
+function calculatePoints() {
+    let output = "<h2>Результаты:</h2>";
+    const topics = document.querySelectorAll('.topic');
 
-        foundThemes.forEach(theme => {
-            if (!scores.hasOwnProperty(theme.faction) || scores[theme.faction] >= 70) return;
+    topics.forEach((topic, index) => {
+        const points = document.getElementById(`points${index}`).value;
+        const org = topic.querySelector('strong').innerText;
+        const title = topic.querySelector('p').innerText.split(':')[1].trim();
+        const date = topic.querySelectorAll('p')[1].innerText.split(':')[1].trim();
 
-            scores[theme.faction] += 1;
-
-            let result = `+**1** балл лидеру **${theme.faction}** | | ${theme.date} | Организация мероприятия "${theme.title}" | Баллы: **${scores[theme.faction]}**`;
-
-            let p = document.createElement("p");
-            p.innerHTML = result;
-            outputDiv.appendChild(p);
-        });
+        output += `
+            <p>+1 балл лидеру **${org}** | <@id> | ${date} | Организация мероприятия "${title}" | Баллы: **${parseInt(points) + 1}**</p>
+        `;
     });
-});
+
+    document.getElementById('output').innerHTML = output;
+}
