@@ -6,8 +6,8 @@ document.getElementById("processButton").addEventListener("click", function() {
     themesList.innerHTML = "";  
     resultsDiv.style.display = "none";  
 
-    // Регулярное выражение для извлечения фракции, даты и названия
-    let regex = /Рассмотрено\s+([A-ZА-ЯЁ]+)\s*\|\s*([\d.]+)[^|]*\|\s*["«](.+?)["»]/gi;
+    // Улучшенное регулярное выражение
+    let regex = /Рассмотрено\s+([A-ZА-ЯЁ]+)\s*\|\s*([\d]{1,2}[.\d]{2,4})[^|]*\|\s*["«](.+?)["»]/gi;
     let matches = [...inputText.matchAll(regex)];
 
     if (matches.length === 0) {
