@@ -6,7 +6,7 @@ document.getElementById("processButton").addEventListener("click", function() {
     themesList.innerHTML = "";  
     resultsDiv.style.display = "none";  
 
-    let regex = /Рассмотрено (\w+) \| ([\d.]+) [^|]+\| "(.+?)"/g;
+    let regex = /Рассмотрено\s+(\w+)\s*\|\s*([\d.]+)[^|]*\|\s*["«](.+?)["»]/gi;
     let matches = [...inputText.matchAll(regex)];
 
     if (matches.length === 0) {
@@ -18,7 +18,7 @@ document.getElementById("processButton").addEventListener("click", function() {
 
     matches.forEach(match => {
         let [_, faction, date, title] = match;
-        if (faction === "ESB") faction = "Ballas";
+        if (faction.toUpperCase() === "ESB") faction = "Ballas";
         foundThemes.push({ faction, date, title });
         
         let li = document.createElement("li");
