@@ -1,13 +1,15 @@
-document.getElementById("processButton").addEventListener("click", function() {
+document.getElementById("findThemes").addEventListener("click", function() {
     let inputText = document.getElementById("inputText").value;
-    let themesList = document.getElementById("themesList");
-    let resultsDiv = document.getElementById("results");
+    let themesListDiv = document.getElementById("themesList");
+    let themeItems = document.getElementById("themeItems");
+    let outputDiv = document.getElementById("output");
 
-    themesList.innerHTML = "";  
-    resultsDiv.style.display = "none";  
+    themeItems.innerHTML = "";
+    outputDiv.innerHTML = "";
+    themesListDiv.style.display = "none";
 
     // Улучшенное регулярное выражение
-    let regex = /Рассмотрено\s+([A-ZА-ЯЁ]+)\s*\|\s*([\d]{1,2}[.\d]{2,4})[^|]*\|\s*["«](.+?)["»]/gi;
+    let regex = /Рассмотрено\s+([A-ZА-ЯЁ]+)\s*\|\s*([\d]{1,2}[.\d]{1,2}[.\d]{2,4})[^|]*\|\s*["«](.+?)["»]/gi;
     let matches = [...inputText.matchAll(regex)];
 
     if (matches.length === 0) {
@@ -16,22 +18,22 @@ document.getElementById("processButton").addEventListener("click", function() {
     }
 
     let foundThemes = [];
-
+    
     matches.forEach(match => {
         let [_, faction, date, title] = match;
         faction = faction.toUpperCase();
-        if (faction === "ESB") faction = "Ballas";
-        
+        if (faction === "ESB") faction = "Ballas"; // Заменяем ESB на Ballas
+
         foundThemes.push({ faction, date, title });
 
         let li = document.createElement("li");
         li.textContent = `${faction} | ${date} | ${title}`;
-        themesList.appendChild(li);
+        themeItems.appendChild(li);
     });
 
-    resultsDiv.style.display = "block";
+    themesListDiv.style.display = "block";
 
-    document.getElementById("calculateButton").addEventListener("click", function() {
+    document.getElementById("calculateScores").addEventListener("click", function() {
         let scoresInput = document.getElementById("scoresInput").value;
         let scores = {};
         
@@ -40,7 +42,6 @@ document.getElementById("processButton").addEventListener("click", function() {
             if (parts.length === 2) scores[parts[0].toUpperCase()] = parseInt(parts[1]);
         });
 
-        let outputDiv = document.getElementById("output");
         outputDiv.innerHTML = "<h2>Результаты:</h2>";
 
         foundThemes.forEach(theme => {
