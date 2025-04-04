@@ -112,6 +112,7 @@
             "mg": "Marabunta",
         };
         org = transliterate(org.toLowerCase());
+        if (org === "gov") return "";  // Если организация Gov, возвращаем пустое значение
         return orgMap[org] || org;
     }
 
@@ -128,7 +129,7 @@
             "Yak": "<@881263371285069826>",
             "Ballas": "<@836903934253465610>",
             "RM": "<@243667693712965633>",
-            "FIB": "<@421653731864739850>",
+            "Fib": "<@421653731864739850>",
             "LSSD": "<@376757737750528001>",
             "Families": "<@807465036662046762>",
             "AM": "<@360841513372221440>",
@@ -143,7 +144,7 @@
     }
 
     function cleanTitle(title) {
-            return title.replace(/["«»]/g, "").trim();
+        return title.replace(/["«»]/g, "").trim();
     }
 
     function getBallWord(count) {
@@ -166,7 +167,10 @@
 
         while ((match = regex.exec(inputText)) !== null) {
             let rawOrg = match[1];
-            let org = processOrganization(rawOrg);
+            let org = processOrganization(rawOrg); // Обработка организации
+
+            if (!org) continue;  // Пропускаем организацию, если это Gov
+
             let date = cleanDate(match[2].replace(/[;,]/g, ''));
             let title = match[3];
 
@@ -182,6 +186,7 @@
 
         output += "<h3>Введите начальное количество баллов для организаций:</h3>";
         uniqueOrgs.forEach(org => {
+            if (org === "") return;  // Пропускаем Gov
             output += 
                 `<div class="organization-entry">
                     <label for="org_${org}">Баллы для организации "${displayOrganization(org)}":</label>
@@ -190,6 +195,7 @@
         });
 
         topics.forEach((topic, index) => {
+            if (topic.org === "") return;  // Пропускаем Gov
             output += 
                 `<div class="topic">
                     <p>Тема ${index + 1}: <strong>${cleanTitle(topic.title)}</strong></p>
