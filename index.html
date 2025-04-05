@@ -158,57 +158,68 @@
     }
 
     function parseText() {
-        const inputText = document.getElementById('inputText').value;
-        const regex = /Рассмотрено\s([A-Za-zА-Яа-я\-]+)\s*\|?\s*(\d{1,2}\.\d{1,2}\.\d{2,4}[;,]?\s*\d{0,2}:\d{0,2})\s*\|?\s*(.*?)\s*(?=Изменить|Выделить для модерации|$)/g;
+    const inputText = document.getElementById('inputText').value;
 
-        let match;
-        let output = "<h2>Найденные темы:</h2>";
-        topics = [];
+    // Регулярка поддерживает: / | - — и даже пробелы как разделители + время необязательно
+    const regex = /Рассмотрено\s([A-Za-zА-Яа-я\-]+)\s*[\|\/\-—]?\s*(\d{1,2}[.\-\/]\d{1,2}[.\-\/]\d{2,4}(?:[;,]?\s*\d{1,2}[:.]?\d{0,2})?)?\s*[\|\/\-—]?\s*["«»]?(.*?)["«»]?(?=\s*(?:Изменить|Выделить для модерации|$))/gi;
 
-        while ((match = regex.exec(inputText)) !== null) {
-            let rawOrg = match[1];
-            let org = processOrganization(rawOrg); // Обработка организации
+    let match;
+    let output = "<h2>Найденные темы:</h2>";
+    topics = [];
 
-            if (!org) continue;  // Пропускаем организацию, если это Gov
+    while ((match = regex.exec(inputText)) !== null) {
+        let rawOrg = match[1];
+        let org = processOrganization(rawOrg); // Обработка организации
 
-            let date = cleanDate(match[2].replace(/[;,]/g, ''));
-            let title = match[3];
+        if (!org) continue;  // Пропускаем организацию, если это Gov
 
-            topics.push({ rawOrg, org, date, title });
+        let dateRaw = (match[2] || "").trim();
+        let title = match[3];
+
+        if (dateRaw) {
+            // Преобразуем время 18.00 в 18:00
+            dateRaw = dateRaw.replace(/(\d{1,2})[.,](\d{2})$/, '$1:$2');
+        } else {
+            dateRaw = "Без времени";
         }
 
-        if (topics.length === 0) {
-            document.getElementById('output').innerHTML = "<p>Нет подходящих данных.</p>";
-            return;
-        }
+        let date = cleanDate(dateRaw);
 
-        const uniqueOrgs = [...new Set(topics.map(t => t.org))];
-
-        output += "<h3>Введите начальное количество баллов для организаций:</h3>";
-        uniqueOrgs.forEach(org => {
-            if (org === "") return;  // Пропускаем Gov
-            output += 
-                `<div class="organization-entry">
-                    <label for="org_${org}">Баллы для организации "${displayOrganization(org)}":</label>
-                    <input type="number" id="org_${org}" min="0" value="1"><br><br>
-                </div>`;
-        });
-
-        topics.forEach((topic, index) => {
-            if (topic.org === "") return;  // Пропускаем Gov
-            output += 
-                `<div class="topic">
-                    <p>Тема ${index + 1}: <strong>${cleanTitle(topic.title)}</strong></p>
-                    <p>Организация: <strong>${displayOrganization(topic.org)}</strong></p>
-                    <p>Дата: <strong>${topic.date}</strong></p>
-                    <label for="points_${index}">Баллы за тему (1–3):</label>
-                    <input type="number" id="points_${index}" min="1" max="3" value="1"><br><br>
-                </div>`;
-        });
-
-        output += `<button onclick="calculatePoints()">К результатам</button>`;
-        document.getElementById('output').innerHTML = output;
+        topics.push({ rawOrg, org, date, title });
     }
+
+    if (topics.length === 0) {
+        document.getElementById('output').innerHTML = "<p>Нет подходящих данных.</p>";
+        return;
+    }
+
+    const uniqueOrgs = [...new Set(topics.map(t => t.org))];
+
+    output += "<h3>Введите начальное количество баллов для организаций:</h3>";
+    uniqueOrgs.forEach(org => {
+        if (org === "") return;  // Пропускаем Gov
+        output += 
+            `<div class="organization-entry">
+                <label for="org_${org}">Баллы для организации "${displayOrganization(org)}":</label>
+                <input type="number" id="org_${org}" min="0" value="1"><br><br>
+            </div>`;
+    });
+
+    topics.forEach((topic, index) => {
+        if (topic.org === "") return;  // Пропускаем Gov
+        output += 
+            `<div class="topic">
+                <p>Тема ${index + 1}: <strong>${cleanTitle(topic.title)}</strong></p>
+                <p>Организация: <strong>${displayOrganization(topic.org)}</strong></p>
+                <p>Дата: <strong>${topic.date}</strong></p>
+                <label for="points_${index}">Баллы за тему (1–3):</label>
+                <input type="number" id="points_${index}" min="1" max="3" value="1"><br><br>
+            </div>`;
+    });
+
+    output += `<button onclick="calculatePoints()">К результатам</button>`;
+    document.getElementById('output').innerHTML = output;
+}
 
     function calculatePoints() {
         let output = "<h2>Результаты:</h2>";
