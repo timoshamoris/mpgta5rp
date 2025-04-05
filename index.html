@@ -110,6 +110,7 @@
             "fam": "Families",
             "mg-13": "Marabunta",
             "mg": "Marabunta",
+            "bsg": "Bloods",
         };
         org = transliterate(org.toLowerCase());
         if (org === "gov") return "";  // Если организация Gov, возвращаем пустое значение
@@ -137,7 +138,8 @@
             "Wn": "<@3330790205047177226>",
             "EMS": "<@Отсутствует>",
             "Marabunta": "<@Отсутствует>",
-            "SASPA": "<@Отсутствует>",
+            "SASPA": "<@702572854348087427>",
+            "Bloods": "<@583989204350926861>",
             "LCN": "<@927652180738072657>"
         };
         return mentions[org] || "@";
