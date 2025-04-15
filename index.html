@@ -120,7 +120,7 @@
     function displayOrganization(org) {
         const upper = org.toUpperCase();
         const lastChar = upper.charAt(upper.length - 1);
-        if (['M', 'D'].includes(lastChar)) return upper;
+        if (['M', 'D', 'N', 'B'].includes(lastChar)) return upper;
         return org.charAt(0).toUpperCase() + org.slice(1).toLowerCase();
     }
 
@@ -130,7 +130,7 @@
             "Yak": "<@881263371285069826>",
             "Ballas": "<@836903934253465610>",
             "RM": "<@243667693712965633>",
-            "Fib": "<@421653731864739850>",
+            "FIB": "<@421653731864739850>",
             "LSSD": "<@376757737750528001>",
             "Families": "<@807465036662046762>",
             "AM": "<@360841513372221440>",
@@ -140,7 +140,7 @@
             "Marabunta": "<@660440692946108428>",
             "Saspa": "<@702572854348087427>",
             "Bloods": "<@583989204350926861>",
-            "LCN": "<@927652180738072657>"
+            "LCN": "<@419557641228910603>"
         };
         return mentions[org] || "@";
     }
