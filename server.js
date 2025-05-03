@@ -8,7 +8,7 @@ const port = 3000;
 
 const clientId = process.env.DISCORD_CLIENT_ID;
 const clientSecret = process.env.DISCORD_CLIENT_SECRET;
-const redirectUri = 'https://yourwebsite.com/auth/callback';  // Тот же URI, что и в кнопке
+const redirectUri = 'https://timoshamoris.github.io/mpgta5rp/';  // Тот же URI, что и в кнопке
 
 app.get('/auth/callback', async (req, res) => {
     const code = req.query.code;
