@@ -226,22 +226,22 @@
 
     function getMention(org) {
         const mentions = {
-            "MM": "<@305310302734385152>",
-            "Yak": "<@418800489229189121>",
+            "MM": "<@243667693712965633>",
+            "Yak": "<@480486593870954496>",
             "Ballas": "<@727104899728277635>",
             "RM": "<@305349339348336641>",
             "FIB": "<@444183017708060672>",
             "LSSD": "<@690227156869316669>",
-            "Families": "<@294876008912388116>",
+            "Families": "<@499612649022160897>",
             "AM": "<@1325909607717277820>",
             "Vagos": "<@315527934230265856>",
             "WN": "<@330790205047177226>",
             "Ems": "<@424975096512249869>",
-            "Marabunta": "<@660440692946108428>",
+            "Marabunta": "<@665254353166270484>",
             "Saspa": "<@673585123534569494>",
             "Bloods": "<@807465036662046762>",
             "Army": "<@560737816599068693>",
-            "LSPD": "<@969486366851338280>",
+            "LSPD": "<@840085053764796427>",
             "LCN": "<@674539731819954197>"
         };
         return mentions[org] || "@";
@@ -315,8 +315,8 @@
                     <p>Тема ${index + 1}: <strong>${cleanTitle(topic.title)}</strong></p>
                     <p>Организация: <strong>${displayOrganization(topic.org)}</strong></p>
                     <p>Дата: <strong>${topic.date}</strong></p>
-                    <label for="points_${index}">Баллы за тему (1–3):</label>
-                    <input type="number" id="points_${index}" min="1" max="3" value="1"><br><br>
+                    <label for="points_${index}">Баллы за тему (0–3):</label>
+                    <input type="number" id="points_${index}" min="0" max="3" value="1"><br><br>
                 </div>`;
         });
 
